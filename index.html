@@ -1299,12 +1299,13 @@ async function initTrainerCalendar(trainerName) {
 		  moveSlot:     data.allowMoveSlot     !== false 
       };
     } else {
-      trainerPermissions = { addBooking: true, addSlot: true, deleteSlot: true };
+      trainerPermissions = { addBooking: true, addSlot: true, deleteSlot: true,  moveSlot: true };
     }
 	  window.trainerPermissions = trainerPermissions;
   } catch (err) {
     console.error("Errore caricamento permessi istruttore:", err);
-    trainerPermissions = { addBooking: true, addSlot: true, deleteSlot: true };
+    trainerPermissions = { addBooking: true, addSlot: true, deleteSlot: true, moveSlot: true };
+	  window.trainerPermissions = trainerPermissions;
   }
 
   /* ---------- 2. INIZIALIZZO CALENDARIO ---------- */
@@ -1339,24 +1340,25 @@ async function initTrainerCalendar(trainerName) {
     dayHeaderFormat: { weekday: "short", day: "numeric" },
 
 	      // ---------- drag & drop / resize slot istruttore ----------
-    eventAllow: (dropInfo, draggedEvent) => {
-		 if (!adminPermissions.moveSlot) return false;
-      const data = draggedEvent.extendedProps || {};
-      // vieto lo spostamento se lo slot ha già prenotazioni
-      if (data.bookedCount > 0) return false;
-      // (opzionale) blocco lo spostamento nel passato
-      if (dropInfo.start < new Date()) return false;
-      return true;
-    },
+eventAllow: (dropInfo, draggedEvent) => {
+  // usa i permessi dell'istruttore
+  if (!trainerPermissions.moveSlot) return false;
 
-    eventDrop: async (info) => {
-		
-		
-		if (!adminPermissions.moveSlot) {
+  const data = draggedEvent.extendedProps || {};
+  // vieto lo spostamento se lo slot ha già prenotazioni
+  if (data.bookedCount > 0) return false;
+  // (opzionale) blocco lo spostamento nel passato
+  if (dropInfo.start < new Date()) return false;
+  return true;
+},
+
+eventDrop: async (info) => {
+  if (!trainerPermissions.moveSlot) {
     alert("Non hai i permessi per spostare gli slot.");
     info.revert();
     return;
   }
+
 
       try {
         const slotRef = doc(db, "availabilities", info.event.id);
@@ -1405,7 +1407,7 @@ async function initTrainerCalendar(trainerName) {
     },
 
     eventResize: async (info) => {
-		if (!adminPermissions.moveSlot) {
+  if (!trainerPermissions.moveSlot) {
     alert("Non hai i permessi per modificare la durata degli slot.");
     info.revert();
     return;
@@ -1694,12 +1696,35 @@ async function loadTrainerDisciplines() {
 
 function openTrainerQuickSlotModal(selectionInfo) {
   trainerSelectionInfo = selectionInfo;
-  document.getElementById("trainerQuickDuration").value = "60";
+
+  // durata di default
+  let defaultDuration = 60;
+
+  if (selectionInfo && selectionInfo.start && selectionInfo.end) {
+    const diffMs = selectionInfo.end.getTime() - selectionInfo.start.getTime();
+
+    if (diffMs > 0) {
+      const rawMinutes = diffMs / 60000; // ms → minuti
+
+      // se l'utente ha selezionato un solo "slot" da 15'
+      // lo interpretiamo come "clic singolo" → 60 minuti
+      if (rawMinutes <= 15) {
+        defaultDuration = 60;
+      } else {
+        // altrimenti usiamo la durata selezionata, arrotondata ai 15'
+        defaultDuration = Math.round(rawMinutes / 15) * 15;
+      }
+    }
+  }
+
+  document.getElementById("trainerQuickDuration").value = String(defaultDuration);
   document.getElementById("trainerQuickMaxSeats").value = "1";
   loadTrainerDisciplines();
   document.getElementById("trainerQuickSlotModal").classList.remove("hidden");
   document.body.classList.add("overflow-hidden");
 }
+
+
 
 document.getElementById("trainerQuickCancel")?.addEventListener("click", () => {
   document.getElementById("trainerQuickSlotModal").classList.add("hidden");
