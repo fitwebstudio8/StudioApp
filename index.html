@@ -2269,10 +2269,7 @@ document.getElementById("trainerQuickSave")?.addEventListener("click", async () 
         }
 
         const cal = new FullCalendar.Calendar(calEl, {
-         initialView: defaultCalendarView,
-handleWindowResize: true,
-dayMaxEvents: true,
-height: "auto",
+       initialView: "timeGridDay",
 
           initialDate: date,
           allDaySlot: false,
@@ -2507,10 +2504,7 @@ height: "auto",
 
         let prev = null;
         editCalendar = new FullCalendar.Calendar(calEl, {
-         initialView: defaultCalendarView,
-handleWindowResize: true,
-dayMaxEvents: true,
-height: "auto",
+       initialView: "timeGridDay",
 
           initialDate: date,
           allDaySlot: false,
