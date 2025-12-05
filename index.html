@@ -173,13 +173,48 @@
         <button id="openTrainersBtn" class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">Gestione Istruttori</button>
         <button id="openClientsBtn" class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700">👥 Gestione Clienti</button>
         <button id="openLogsBtn" class="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">📜 Registro attività</button>
+		<button id="adminChangePasswordBtn" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800">Cambia password</button>
         <button id="logoutBtn" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Logout</button>
       </div>
     </div>
     <div id="calendarStudio" class="border rounded shadow-sm"></div>
   </section>
 
-	
+	<!-- ========================= ADMIN: MODALE CAMBIO PASSWORD ========================= -->
+<div id="adminChangePasswordModal"
+     class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg p-5 w-full max-w-sm">
+    <h3 class="text-lg font-semibold mb-3">Cambia password admin</h3>
+
+    <div class="mb-2">
+      <label class="block text-sm font-semibold mb-1">Password attuale</label>
+      <input id="adminCurrentPass" type="password"
+             class="border p-2 rounded w-full text-sm" />
+    </div>
+    <div class="mb-2">
+      <label class="block text-sm font-semibold mb-1">Nuova password</label>
+      <input id="adminNewPass" type="password"
+             class="border p-2 rounded w-full text-sm" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-semibold mb-1">Conferma nuova password</label>
+      <input id="adminNewPass2" type="password"
+             class="border p-2 rounded w-full text-sm" />
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button id="adminChangePasswordCancel"
+              class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 text-sm">
+        Annulla
+      </button>
+      <button id="adminChangePasswordConfirm"
+              class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+        Salva
+      </button>
+    </div>
+  </div>
+</div>
+
 	
 	  <!-- ========================= TRAINER: PANNELLO ISTRUTTORE ========================= -->
  <section id="trainerPanel" class="hidden max-w-6xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
@@ -191,9 +226,16 @@
       </p>
     </div>
     <div class="flex gap-2">
+      <!-- se hai già il tasto Report, lascialo pure -->
       <button id="trainerOpenReport" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
         📊 Report
       </button>
+
+      <!-- 👇 nuovo bottone cambio password -->
+      <button id="trainerChangePasswordBtn" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800">
+        Cambia password
+      </button>
+
       <button id="trainerLogoutBtn" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
         Logout
       </button>
@@ -201,6 +243,7 @@
   </div>
   <div id="trainerCalendar" class="border rounded shadow-sm"></div>
 </section>
+
 <!-- ========================= MODALE DETTAGLI SLOT ISTRUTTORE ========================= -->
 <div id="trainerSlotModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full space-y-4">
@@ -241,6 +284,40 @@
   </div>
 </div>
 
+<!-- ========================= MODALE CAMBIO PASSWORD ISTRUTTORE ========================= -->
+<div id="trainerChangePasswordModal"
+     class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-lg p-5 w-full max-w-sm">
+    <h3 class="text-lg font-semibold mb-3">Cambia password</h3>
+
+    <div class="mb-2">
+      <label class="block text-sm font-semibold mb-1">Password attuale</label>
+      <input id="trainerCurrentPass" type="password"
+             class="border p-2 rounded w-full text-sm" />
+    </div>
+    <div class="mb-2">
+      <label class="block text-sm font-semibold mb-1">Nuova password</label>
+      <input id="trainerNewPass" type="password"
+             class="border p-2 rounded w-full text-sm" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-semibold mb-1">Conferma nuova password</label>
+      <input id="trainerNewPass2" type="password"
+             class="border p-2 rounded w-full text-sm" />
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button id="trainerChangePasswordCancel"
+              class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 text-sm">
+        Annulla
+      </button>
+      <button id="trainerChangePasswordConfirm"
+              class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+        Salva
+      </button>
+    </div>
+  </div>
+</div>
 	
   <!-- ========================= ADMIN: ISTRUTTORI ========================= -->
   <section id="adminTrainers" class="hidden max-w-4xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
@@ -360,18 +437,21 @@
       </div>
     </div>
     <table class="w-full text-sm border">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="p-2 border">Data</th>
-          <th class="p-2 border">Ora</th>
-          <th class="p-2 border">Istruttore</th>
-          <th class="p-2 border">Disciplina</th>
-          <th class="p-2 border">Posti</th>
-          <th class="p-2 border">Clienti</th>
-        </tr>
-      </thead>
-      <tbody id="reportTableBody"></tbody>
-    </table>
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="p-2 border">Data</th>
+      <th class="p-2 border">Ora</th>
+      <th class="p-2 border">Istruttore</th>
+      <th class="p-2 border">Disciplina</th>
+      <th class="p-2 border">Posti</th>
+      <th class="p-2 border">Clienti</th>
+      <th class="p-2 border">Note cliente</th>
+      <th class="p-2 border">Note interne</th>
+    </tr>
+  </thead>
+  <tbody id="reportTableBody"></tbody>
+</table>
+
   </section>
 
   <!-- ========================= MODALI ========================= -->
@@ -556,7 +636,17 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, getDocs, query, where, updateDoc, deleteDoc, runTransaction,setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+   import { 
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCsczpMpMc-vW10Qc21Exh6MX1lr-b38Ig",
@@ -642,6 +732,83 @@ const secondaryAuth = getAuth(secondaryApp);
         document.getElementById("resetPasswordForm").classList.remove("hidden");
       });
 
+	  
+	  // ---------------- CAMBIO PASSWORD ISTRUTTORE ----------------
+const trainerChangePasswordModal = document.getElementById("trainerChangePasswordModal");
+const trainerChangePasswordBtn = document.getElementById("trainerChangePasswordBtn");
+const trainerChangePasswordCancel = document.getElementById("trainerChangePasswordCancel");
+const trainerChangePasswordConfirm = document.getElementById("trainerChangePasswordConfirm");
+
+function openTrainerChangePasswordModal() {
+  if (!trainerChangePasswordModal) return;
+  document.getElementById("trainerCurrentPass").value = "";
+  document.getElementById("trainerNewPass").value = "";
+  document.getElementById("trainerNewPass2").value = "";
+  trainerChangePasswordModal.classList.remove("hidden");
+  trainerChangePasswordModal.classList.add("flex");
+}
+
+function closeTrainerChangePasswordModal() {
+  if (!trainerChangePasswordModal) return;
+  trainerChangePasswordModal.classList.add("hidden");
+  trainerChangePasswordModal.classList.remove("flex");
+}
+
+trainerChangePasswordBtn?.addEventListener("click", () => {
+  openTrainerChangePasswordModal();
+});
+
+trainerChangePasswordCancel?.addEventListener("click", () => {
+  closeTrainerChangePasswordModal();
+});
+
+// Salva nuova password (con re-auth)
+trainerChangePasswordConfirm?.addEventListener("click", async () => {
+  const currentPass = document.getElementById("trainerCurrentPass").value.trim();
+  const newPass = document.getElementById("trainerNewPass").value.trim();
+  const newPass2 = document.getElementById("trainerNewPass2").value.trim();
+
+  if (!currentPass || !newPass || !newPass2) {
+    return alert("⚠️ Compila tutti i campi.");
+  }
+
+  if (newPass !== newPass2) {
+    return alert("⚠️ Le nuove password non coincidono.");
+  }
+
+  if (newPass.length < 6) {
+    return alert("⚠️ La password deve avere almeno 6 caratteri.");
+  }
+
+  const user = auth.currentUser;
+  if (!user || !user.email) {
+    return alert("❌ Utente non trovato. Riprova effettuando di nuovo l'accesso.");
+  }
+
+  try {
+    // 1) RE-AUTH con la password attuale
+    const cred = EmailAuthProvider.credential(user.email, currentPass);
+    await reauthenticateWithCredential(user, cred);
+
+    // 2) Aggiorna la password
+    await updatePassword(user, newPass);
+
+    alert("✅ Password aggiornata con successo.");
+    closeTrainerChangePasswordModal();
+  } catch (err) {
+    console.error("Errore cambio password trainer:", err);
+    if (err.code === "auth/wrong-password") {
+      alert("❌ La password attuale non è corretta.");
+    } else if (err.code === "auth/too-many-requests") {
+      alert("❌ Troppi tentativi non riusciti. Attendi qualche minuto e riprova.");
+    } else {
+      alert("❌ Errore durante il cambio password: " + (err.message || err.code));
+    }
+  }
+});
+
+	  
+	  
 	  // Cancellazione prenotazione dal pannello istruttore
 document.getElementById("trainerSlotBookings")?.addEventListener("click", async (e) => {
   const btn = e.target.closest(".trainer-cancel-btn");
@@ -805,6 +972,78 @@ showSection("clientLogin");
         showSection("clientLogin");
       });
 
+// ---------------- CAMBIO PASSWORD ADMIN ----------------
+const adminChangePasswordModal = document.getElementById("adminChangePasswordModal");
+const adminChangePasswordBtn = document.getElementById("adminChangePasswordBtn");
+const adminChangePasswordCancel = document.getElementById("adminChangePasswordCancel");
+const adminChangePasswordConfirm = document.getElementById("adminChangePasswordConfirm");
+
+function openAdminChangePasswordModal() {
+  if (!adminChangePasswordModal) return;
+  document.getElementById("adminCurrentPass").value = "";
+  document.getElementById("adminNewPass").value = "";
+  document.getElementById("adminNewPass2").value = "";
+  adminChangePasswordModal.classList.remove("hidden");
+  adminChangePasswordModal.classList.add("flex");
+}
+
+function closeAdminChangePasswordModal() {
+  if (!adminChangePasswordModal) return;
+  adminChangePasswordModal.classList.add("hidden");
+  adminChangePasswordModal.classList.remove("flex");
+}
+
+adminChangePasswordBtn?.addEventListener("click", () => {
+  openAdminChangePasswordModal();
+});
+
+adminChangePasswordCancel?.addEventListener("click", () => {
+  closeAdminChangePasswordModal();
+});
+
+adminChangePasswordConfirm?.addEventListener("click", async () => {
+  const currentPass = document.getElementById("adminCurrentPass").value.trim();
+  const newPass = document.getElementById("adminNewPass").value.trim();
+  const newPass2 = document.getElementById("adminNewPass2").value.trim();
+
+  if (!currentPass || !newPass || !newPass2) {
+    return alert("⚠️ Compila tutti i campi.");
+  }
+
+  if (newPass !== newPass2) {
+    return alert("⚠️ Le nuove password non coincidono.");
+  }
+
+  if (newPass.length < 6) {
+    return alert("⚠️ La password deve avere almeno 6 caratteri.");
+  }
+
+  const user = auth.currentUser;
+  if (!user || !user.email) {
+    return alert("❌ Utente admin non trovato. Effettua di nuovo l'accesso.");
+  }
+
+  try {
+    // 1) Re-auth con password attuale
+    const cred = EmailAuthProvider.credential(user.email, currentPass);
+    await reauthenticateWithCredential(user, cred);
+
+    // 2) Aggiorna la password
+    await updatePassword(user, newPass);
+
+    alert("✅ Password admin aggiornata con successo.");
+    closeAdminChangePasswordModal();
+  } catch (err) {
+    console.error("Errore cambio password admin:", err);
+    if (err.code === "auth/wrong-password") {
+      alert("❌ La password attuale non è corretta.");
+    } else if (err.code === "auth/too-many-requests") {
+      alert("❌ Troppi tentativi non riusciti. Attendi qualche minuto e riprova.");
+    } else {
+      alert("❌ Errore durante il cambio password: " + (err.message || err.code));
+    }
+  }
+});
 
       /* -------------------------------------------------------- */
       /* ROUTING                                                  */
@@ -2394,8 +2633,8 @@ ${nameLine}
 /* ========================================================= */
 document.getElementById("exportReportPDF")?.addEventListener("click", () => {
   try {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+   const { jsPDF } = window.jspdf;
+const doc = new jsPDF({ orientation: "landscape" });
 
     const instructor = document.getElementById("reportInstructorSelect")?.value || "ALL";
     const startDateRaw = document.getElementById("reportStartDate")?.value || "-";
@@ -2424,7 +2663,16 @@ document.getElementById("exportReportPDF")?.addEventListener("click", () => {
       return;
     }
 
-    const headers = [["Data", "Ora", "Istruttore", "Disciplina", "Posti", "Clienti"]];
+const headers = [[
+  "Data",
+  "Ora",
+  "Istruttore",
+  "Disciplina",
+  "Posti",
+  "Clienti",
+  "Note cliente",
+  "Note interne"
+]];
     doc.autoTable({
       startY: 30,
       head: headers,
@@ -2542,8 +2790,8 @@ document.getElementById("loadReportBtn")?.addEventListener("click", () => loadRe
       }
 
       async function loadReport() {
-        const tbody = document.getElementById("reportTableBody");
-        tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-500">Caricamento...</td></tr>`;
+       const tbody = document.getElementById("reportTableBody");
+tbody.innerHTML = `<tr><td colspan="8" class="p-3 text-center text-gray-500">Caricamento...</td></tr>`;
         const selectedInstructor = document.getElementById("reportInstructorSelect").value;
         const startDate = document.getElementById("reportStartDate").value;
         const endDate = document.getElementById("reportEndDate").value;
@@ -2565,45 +2813,73 @@ document.getElementById("loadReportBtn")?.addEventListener("click", () => loadRe
             const full = `${c.firstName || ""} ${c.lastName || ""}`.trim();
             clientMap[c.email] = full || c.email;
           });
-          const apptMap = {};
-          snapAppt.forEach(a => {
-            const data = a.data();
-            if (data.cancelled) return;
-            const slotId = data.slotId;
-            if (!apptMap[slotId]) apptMap[slotId] = [];
-            apptMap[slotId].push({
-              email: data.email,
-              name: clientMap[data.email] || data.email
-            });
-          });
+         const apptMap = {};
+snapAppt.forEach(a => {
+  const data = a.data();
+  if (data.cancelled) return;
+  const slotId = data.slotId;
+  if (!apptMap[slotId]) apptMap[slotId] = [];
+  apptMap[slotId].push({
+    email: data.email,
+    name: clientMap[data.email] || data.email,
+    notes: (data.notes || "").trim(),
+    adminNote: (data.adminNote || "").trim()
+  });
+});
+
           const filtered = [];
-          snapAvail.forEach(d => {
-            const v = withDefaults(d.data());
-            const start = new Date(toISO(v.start));
-            if (isNaN(start)) return;
-            if (start < from || start > to) return;
-            if (selectedInstructor !== "ALL" && v.instructor !== selectedInstructor) return;
-            filtered.push({
-              ...v,
-              slotId: d.id,
-              startDate: start,
-              giorno: start.toLocaleDateString("it-IT", { weekday: 'long', day: '2-digit', month: '2-digit' }),
-              ora: start.toLocaleTimeString("it-IT", { hour: '2-digit', minute: '2-digit' }),
-              clienti: (apptMap[d.id] || []).map(c => c.name)
-            });
-          });
+         snapAvail.forEach(d => {
+  const v = withDefaults(d.data());
+  const start = new Date(toISO(v.start));
+  if (isNaN(start)) return;
+  if (start < from || start > to) return;
+  if (selectedInstructor !== "ALL" && v.instructor !== selectedInstructor) return;
+
+  const slotAppts = apptMap[d.id] || [];
+
+  const clienti = slotAppts.map(c => c.name);
+
+  const noteClienti = slotAppts
+    .filter(c => c.notes)
+    .map(c => `${c.name}: ${c.notes}`);
+
+  const noteInterne = slotAppts
+    .filter(c => c.adminNote)
+    .map(c => `${c.name}: ${c.adminNote}`);
+
+  filtered.push({
+    ...v,
+    slotId: d.id,
+    startDate: start,
+    giorno: start.toLocaleDateString("it-IT", { weekday: 'long', day: '2-digit', month: '2-digit' }),
+    ora: start.toLocaleTimeString("it-IT", { hour: '2-digit', minute: '2-digit' }),
+    clienti,
+    noteClienti,
+    noteInterne
+  });
+});
+
           filtered.sort((a, b) => a.startDate - b.startDate);
-          const rows = filtered.map(v => `
-            <tr>
-              <td class="p-2 border">${v.giorno}</td>
-              <td class="p-2 border">${v.ora}</td>
-              <td class="p-2 border">${v.instructor}</td>
-              <td class="p-2 border">${v.type || "-"}</td>
-              <td class="p-2 border text-center">${v.bookedCount}/${v.maxSeats}</td>
-              <td class="p-2 border">${v.clienti.length ? v.clienti.join("<br>") : "Nessuno"}</td>
-            </tr>
-          `);
-          tbody.innerHTML = rows.length ? rows.join("") : `<tr><td colspan="6" class="p-3 text-center text-gray-500">Nessun dato disponibile.</td></tr>`;
+         const rows = filtered.map(v => `
+  <tr>
+    <td class="p-2 border">${v.giorno}</td>
+    <td class="p-2 border">${v.ora}</td>
+    <td class="p-2 border">${v.instructor}</td>
+    <td class="p-2 border">${v.type || "-"}</td>
+    <td class="p-2 border text-center">${v.bookedCount}/${v.maxSeats}</td>
+    <td class="p-2 border">
+      ${v.clienti && v.clienti.length ? v.clienti.join("<br>") : "Nessuno"}
+    </td>
+    <td class="p-2 border">
+      ${v.noteClienti && v.noteClienti.length ? v.noteClienti.join("<br>") : "-"}
+    </td>
+    <td class="p-2 border">
+      ${v.noteInterne && v.noteInterne.length ? v.noteInterne.join("<br>") : "-"}
+    </td>
+  </tr>
+`);
+
+          tbody.innerHTML = rows.length ? rows.join("") : `<tr><td colspan="8" class="p-3 text-center text-gray-500">Nessun dato disponibile.</td></tr>`;
         } catch (err) {
           console.error("Errore report:", err);
           tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-red-600">Errore nel caricamento.</td></tr>`;
@@ -3182,25 +3458,30 @@ La tua prenotazione del ${bookingData.date} alle ${bookingData.time} con ${booki
         }
       });
 
-      /* ========================================================= */
-      /* ADMIN: SALVA NOTA INTERNA                                 */
-      /* ========================================================= */
-      document.getElementById("saveAdminInternalNote")?.addEventListener("click", async () => {
-        const apptId = document.getElementById("adminApptSelector").value;
-        if (!apptId) return alert("Seleziona una prenotazione dall'elenco.");
-        const note = document.getElementById("adminInternalNote").value.trim();
-        try {
-          const apptRef = doc(db, "appointments", apptId);
-          await updateDoc(apptRef, {
-            adminNote: note,
-            adminNoteUpdatedAt: new Date().toISOString()
-          });
-          alert("Nota salvata!");
-        } catch (err) {
-          console.error("Errore salvataggio nota:", err);
-          alert("Errore durante il salvataggio della nota.");
-        }
-      });
+     /* ========================================================= */
+/* ADMIN: SALVA NOTA INTERNA                                 */
+/* ========================================================= */
+document.getElementById("saveAdminInternalNote")?.addEventListener("click", async () => {
+  const apptId = document.getElementById("adminApptSelector").value;
+  if (!apptId) return alert("Seleziona una prenotazione dall'elenco.");
+  const note = document.getElementById("adminInternalNote").value.trim();
+
+  try {
+    const apptRef = doc(db, "appointments", apptId);
+    await updateDoc(apptRef, {
+      adminNote: note,
+      adminNoteUpdatedAt: new Date().toISOString()
+    });
+
+    alert("Nota salvata!");
+
+    // 🔁 ricarico il calendario admin per aggiornare l'icona 📝 sugli slot
+    await initAdminCalendars();
+  } catch (err) {
+    console.error("Errore salvataggio nota:", err);
+    alert("Errore durante il salvataggio della nota.");
+  }
+});
 
       /* ========================================================= */
       /* ADMIN: SPOSTA PRENOTAZIONE                                */
