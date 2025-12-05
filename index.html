@@ -182,20 +182,25 @@
 	
 	
 	  <!-- ========================= TRAINER: PANNELLO ISTRUTTORE ========================= -->
-  <section id="trainerPanel" class="hidden max-w-6xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
-    <div class="flex justify-between items-center mb-4">
-      <div>
-        <h2 class="text-2xl font-bold text-green-700">Calendario Istruttore</h2>
-        <p class="mt-1 text-sm text-gray-700">
-          Istruttore: <span id="trainerNameLabel" class="font-semibold"></span>
-        </p>
-      </div>
+ <section id="trainerPanel" class="hidden max-w-6xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-bold text-green-700">Calendario Istruttore</h2>
+      <p class="mt-1 text-sm text-gray-700">
+        Istruttore: <span id="trainerNameLabel" class="font-semibold"></span>
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <button id="trainerOpenReport" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+        📊 Report
+      </button>
       <button id="trainerLogoutBtn" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
         Logout
       </button>
     </div>
-    <div id="trainerCalendar" class="border rounded shadow-sm"></div>
-  </section>
+  </div>
+  <div id="trainerCalendar" class="border rounded shadow-sm"></div>
+</section>
 <!-- ========================= MODALE DETTAGLI SLOT ISTRUTTORE ========================= -->
 <div id="trainerSlotModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full space-y-4">
@@ -2384,69 +2389,145 @@ ${nameLine}
         }
       });
 
-      /* ========================================================= */
-      /* ADMIN: REPORT PDF                                         */
-      /* ========================================================= */
-      document.getElementById("exportReportPDF")?.addEventListener("click", () => {
-        try {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
-          const instructor = document.getElementById("reportInstructorSelect")?.value || "ALL";
-          const startDateRaw = document.getElementById("reportStartDate")?.value || "-";
-          const endDateRaw = document.getElementById("reportEndDate")?.value || "-";
-          const startDate = startDateRaw !== "-" ? new Date(startDateRaw).toLocaleDateString("it-IT") : "-";
-          const endDate = endDateRaw !== "-" ? new Date(endDateRaw).toLocaleDateString("it-IT") : "-";
-          doc.setFontSize(16);
-          doc.text("Report Attività Studio Personal Trainer", 14, 15);
-          doc.setFontSize(10);
-          doc.text(`Periodo: ${startDate} - ${endDate} | Istruttore: ${instructor === "ALL" ? "Tutti" : instructor}`, 14, 22);
-          const rows = Array.from(document.querySelectorAll("#reportTableBody tr")).map(tr =>
-            Array.from(tr.querySelectorAll("td")).map(td => td.innerText.trim())
-          );
-          if (!rows.length || rows[0][0].includes("Nessun")) {
-            alert("⚠️ Nessun dato da esportare.");
-            return;
-          }
-          const headers = [["Data", "Ora", "Istruttore", "Disciplina", "Posti", "Clienti"]];
-          doc.autoTable({
-            startY: 30,
-            head: headers,
-            body: rows,
-            styles: { fontSize: 9 },
-            headStyles: { fillColor: [22, 163, 74] },
-          });
-          const today = new Date().toISOString().slice(0, 10);
-          doc.save(`report_${today}.pdf`);
-        } catch (err) {
-          console.error("Errore esportazione PDF:", err);
-          alert("Errore durante la creazione del PDF.");
-        }
-      });
+     /* ========================================================= */
+/* ADMIN + TRAINER: REPORT PDF                               */
+/* ========================================================= */
+document.getElementById("exportReportPDF")?.addEventListener("click", () => {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-      /* ========================================================= */
-      /* ADMIN: REPORT                                             */
-      /* ========================================================= */
-      document.getElementById("openReport")?.addEventListener("click", async () => {
-        showSection("adminReport");
-        await populateReportInstructors();
-        setDefaultReportDates();
-        loadReport();
-      });
+    const instructor = document.getElementById("reportInstructorSelect")?.value || "ALL";
+    const startDateRaw = document.getElementById("reportStartDate")?.value || "-";
+    const endDateRaw = document.getElementById("reportEndDate")?.value || "-";
 
-      document.getElementById("backToCalendar")?.addEventListener("click", () => showSection("adminPanel"));
-      document.getElementById("loadReportBtn")?.addEventListener("click", () => loadReport());
+    const startDate = startDateRaw !== "-" ? new Date(startDateRaw).toLocaleDateString("it-IT") : "-";
+    const endDate = endDateRaw !== "-" ? new Date(endDateRaw).toLocaleDateString("it-IT") : "-";
 
-      async function populateReportInstructors() {
-        const select = document.getElementById("reportInstructorSelect");
-        const snap = await getDocs(collection(db, "availabilities"));
-        const set = new Set();
-        snap.forEach(doc => {
-          if (doc.data().instructor) set.add(doc.data().instructor);
-        });
-        const instructors = Array.from(set).sort();
-        select.innerHTML = `<option value="ALL">Tutti</option>` +
-          instructors.map(i => `<option value="${i}">${i}</option>`).join("");
+    doc.setFontSize(16);
+    doc.text("Report Attività Studio Personal Trainer", 14, 15);
+    doc.setFontSize(10);
+    doc.text(
+      `Periodo: ${startDate} - ${endDate} | Istruttore: ${
+        instructor === "ALL" ? "Tutti" : instructor
+      }`,
+      14,
+      22
+    );
+
+    const rows = Array.from(document.querySelectorAll("#reportTableBody tr")).map(tr =>
+      Array.from(tr.querySelectorAll("td")).map(td => td.innerText.trim())
+    );
+
+    if (!rows.length || rows[0][0].includes("Nessun")) {
+      alert("⚠️ Nessun dato da esportare.");
+      return;
+    }
+
+    const headers = [["Data", "Ora", "Istruttore", "Disciplina", "Posti", "Clienti"]];
+    doc.autoTable({
+      startY: 30,
+      head: headers,
+      body: rows,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [22, 163, 74] },
+    });
+
+    const today = new Date().toISOString().slice(0, 10);
+    doc.save(`report_${today}.pdf`);
+  } catch (err) {
+    console.error("Errore esportazione PDF:", err);
+    alert("Errore durante la creazione del PDF.");
+  }
+});
+
+/* ========================================================= */
+/* ADMIN + TRAINER: REPORT                                   */
+/* ========================================================= */
+let reportReturnSection = "adminPanel";
+
+/**
+ * Popola il filtro istruttori.
+ * Usa la collection "trainers" (campo name) invece delle availabilities,
+ * così vedi tutti gli istruttori registrati.
+ *
+ * @param {string} preselectName - (opzionale) nome da preselezionare
+ */
+async function populateReportInstructors(preselectName) {
+  const select = document.getElementById("reportInstructorSelect");
+  if (!select) return;
+
+  try {
+    const snap = await getDocs(collection(db, "trainers"));
+    const names = snap.docs
+      .map(d => (d.data().name || "").trim())
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, "it-IT"));
+
+    let html = `<option value="ALL">Tutti</option>`;
+    html += names.map(n => `<option value="${n}">${n}</option>`).join("");
+    select.innerHTML = html;
+
+    // Se devo preselezionare un trainer specifico
+    if (preselectName) {
+      if (!names.includes(preselectName)) {
+        const opt = new Option(preselectName, preselectName);
+        select.add(opt);
       }
+      select.value = preselectName;
+    }
+  } catch (err) {
+    console.error("Errore caricamento istruttori per report:", err);
+    // Fallback: almeno l'opzione "Tutti"
+    select.innerHTML = `<option value="ALL">Tutti</option>`;
+  }
+}
+
+// Apertura report da ADMIN (può vedere tutti gli istruttori)
+document.getElementById("openReport")?.addEventListener("click", async () => {
+  reportReturnSection = "adminPanel";
+
+  showSection("adminReport");
+  await populateReportInstructors();   // nessun trainer pre-selezionato
+  setDefaultReportDates();
+
+  const select = document.getElementById("reportInstructorSelect");
+  if (select) select.disabled = false; // admin può cambiare
+
+  loadReport();
+});
+
+// Apertura report da TRAINER (solo il trainer loggato)
+document.getElementById("trainerOpenReport")?.addEventListener("click", async () => {
+  const trainerName = document.getElementById("trainerNameLabel")?.textContent?.trim();
+  if (!trainerName) {
+    alert("Nome istruttore non trovato.");
+    return;
+  }
+
+  reportReturnSection = "trainerPanel";
+
+  showSection("adminReport");
+
+  // popolo il filtro e preseleziono il trainer loggato
+  await populateReportInstructors(trainerName);
+  setDefaultReportDates();
+
+  const select = document.getElementById("reportInstructorSelect");
+  if (select) select.disabled = true; // il trainer NON può cambiare istruttore
+
+  loadReport();
+});
+
+// Il bottone "Torna al calendario" riporta alla sezione corretta
+document.getElementById("backToCalendar")?.addEventListener("click", () => {
+  showSection(reportReturnSection || "adminPanel");
+});
+
+// il pulsante "Carica Report" ricarica i dati (stesse regole per admin/trainer)
+document.getElementById("loadReportBtn")?.addEventListener("click", () => loadReport());
+
+
 
       function setDefaultReportDates() {
         const startEl = document.getElementById("reportStartDate");
