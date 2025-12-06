@@ -93,14 +93,33 @@
       <input id="loginPass" type="password" placeholder="Password" required class="w-full p-2 border rounded mb-3" />
       <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Accedi</button>
     </form>
+	  
+	  
+	  
     <form id="clientRegisterForm" class="hidden mt-4 space-y-2">
       <input id="regFirstName" type="text" placeholder="Nome" required class="w-full p-2 border rounded" />
       <input id="regLastName" type="text" placeholder="Cognome" required class="w-full p-2 border rounded" />
       <input id="regPhone" type="tel" placeholder="Telefono" pattern="[0-9+ ]{7,15}" required class="w-full p-2 border rounded" />
       <input id="regEmail" type="email" placeholder="Email" required class="w-full p-2 border rounded" />
       <input id="regPass" type="password" placeholder="Password" required class="w-full p-2 border rounded mb-3" />
+		<div class="privacy-box" style="margin: 10px 0; font-size: 0.9em;">
+
+  <label style="display:flex; align-items: flex-start; gap: 8px;">
+   <label style="display:flex; gap:8px; align-items:flex-start;">
+    <input type="checkbox" id="privacyConsent" required style="margin-top:4px;">
+    <span>
+      Dichiaro di aver letto e accettato la 
+      <a href="/privacy.html" target="_blank" style="color:#2563eb;">Privacy Policy</a>
+      e i 
+      <a href="/termini.html" target="_blank" style="color:#2563eb;">Termini e Condizioni</a>.
+    </span>
+  </label>
+</div>
+
       <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Registrati</button>
     </form>
+	  
+	  
     <form id="resetPasswordForm" class="hidden mt-4">
       <input id="resetEmail" type="email" placeholder="Email per reset" required class="w-full p-2 border rounded mb-3" />
       <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Invia</button>
@@ -389,6 +408,7 @@
       <thead class="bg-gray-100">
         <tr>
           <th class="p-2 border">Nome</th>
+			    <th class="p-2 border">Email</th>
           <th class="p-2 border">Attività</th>
           <th class="p-2 border">Telefono</th>
           <th class="p-2 border">Codice CallMeBot</th>
@@ -909,6 +929,14 @@ document.getElementById("trainerSlotBookings")?.addEventListener("click", async 
         const phone = document.getElementById("regPhone").value.trim();
         const email = document.getElementById("regEmail").value.trim();
         const pass = document.getElementById("regPass").value.trim();
+	  
+	  
+	  const privacyOk = document.getElementById("privacyConsent").checked;
+if (!privacyOk) {
+  alert("Devi accettare la Privacy Policy e i Termini per continuare.");
+  return;
+}
+
 
         if (!firstName || !lastName || !phone || !email || !pass) return alert("⚠️ Compila tutti i campi obbligatori.");
 
@@ -3017,10 +3045,10 @@ snapAppt.forEach(a => {
 
    async function loadTrainers() {
   const tbody = document.getElementById("trainersTableBody");
-  tbody.innerHTML = `<tr><td colspan="9" class="p-3 text-center text-gray-500">Caricamento.</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="10" class="p-3 text-center text-gray-500">Caricamento.</td></tr>`;
   const snap = await getDocs(collection(db, "trainers"));
   if (snap.empty) {
-    tbody.innerHTML = `<tr><td colspan="9" class="p-3 text-center text-gray-500">Nessun istruttore.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="p-3 text-center text-gray-500">Nessun istruttore.</td></tr>`;
     return;
   }
   tbody.innerHTML = "";
@@ -3037,6 +3065,7 @@ snapAppt.forEach(a => {
     tbody.innerHTML += `
       <tr>
         <td class="p-2 border">${data.name}</td>
+	  <td class="p-2 border">${data.email || "-"}</td>
         <td class="p-2 border">${(data.activities || []).join(", ")}</td>
         <td class="p-2 border">${data.phone || "-"}</td>
         <td class="p-2 border">${data.apiKey || "-"}</td>
@@ -4093,6 +4122,9 @@ document.getElementById("trainerDeleteSlotBtn")?.addEventListener("click", async
 	
 	<footer id="mainFooter" class="py-6 mt-10 text-center text-white text-sm">
   <div>© 2025 FitWeb – Tutti i diritti riservati</div>
+		<a href="/privacy.html" style="color:#ffffff; text-decoration:none;">Privacy Policy</a> ·
+  <a href="/termini.html" style="color:#ffffff; text-decoration:none;">Termini e Condizioni</a>
+
   <img
     id="footerLogo"
     alt="Logo FitWeb"
